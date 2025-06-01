@@ -63,7 +63,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setReleaseDate(LocalDate.of(1800, 1, 1));
         film.setDuration(120L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));

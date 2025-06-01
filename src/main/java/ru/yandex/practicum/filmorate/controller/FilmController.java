@@ -33,7 +33,7 @@ public class FilmController {
                 throw new ValidationException("Название не может быть пустым");
             }
             if (post.getDescription() == null || post.getDescription().length() > 200) {
-                throw new ValidationException("Описание не может быть пустым и должно быть не длиннее 200 символов");
+                throw new ValidationException("Mаксимальная длина описания — 200 символов");
             }
             if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
                 throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
