@@ -17,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/film")
 public class FilmController {
 
-    private final static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(FilmController.class);
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
@@ -31,15 +31,15 @@ public class FilmController {
     public Film create(@RequestBody Film post) throws ValidationException {
         log.info("Создание нового фильма: {}", post);
         if (post.getName() == null || post.getName().isBlank()) {
-            throw new ValidationException ("Название не может быть пустым");
+            throw new ValidationException("Название не может быть пустым");
         }
-        if(post.getDescription().length()>200) {
-            throw new ValidationException ("Mаксимальная длина описания — 200 символов");
+        if (post.getDescription().length() > 200) {
+            throw new ValidationException("Mаксимальная длина описания — 200 символов");
         }
         if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE.atStartOfDay(ZoneOffset.UTC).toInstant())) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (post.getDuration()<=0) {
+        if (post.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
         post.setId(getNextId());
@@ -62,21 +62,21 @@ public class FilmController {
     public Film update(@RequestBody Film post) throws ValidationException {
         log.info("Обновление фильма с id={}", post.getId());
         if (post.getId() == null) {
-            throw new ValidationException ("Id должен быть указан");
+            throw new ValidationException("Id должен быть указан");
         }
         if (!films.containsKey(post.getId())) {
             throw new ValidationException("Фильм с таким ID не найден");
         }
         if (post.getName() == null || post.getName().isBlank()) {
-            throw new ValidationException ("Название не может быть пустым");
+            throw new ValidationException("Название не может быть пустым");
         }
-        if(post.getDescription().length()>200) {
-            throw new ValidationException ("Mаксимальная длина описания — 200 символов");
+        if (post.getDescription().length() > 200) {
+            throw new ValidationException("Mаксимальная длина описания — 200 символов");
         }
         if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE.atStartOfDay(ZoneOffset.UTC).toInstant())) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (post.getDuration()<=0) {
+        if (post.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
         Film oldFilm = films.get(post.getId());

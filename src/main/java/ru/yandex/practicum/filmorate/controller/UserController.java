@@ -15,7 +15,7 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    private final static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(UserController.class);
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -58,7 +58,7 @@ public class UserController {
     public User update(@RequestBody User post) throws ValidationException {
         log.info("Обновление нового пользователя: {}", post.getId());
         if (post.getId() == null) {
-            throw new ValidationException ("Id должен быть указан");
+            throw new ValidationException("Id должен быть указан");
         }
         if (!users.containsKey(post.getId())) {
             throw new ValidationException("Фильм с таким ID не найден");
