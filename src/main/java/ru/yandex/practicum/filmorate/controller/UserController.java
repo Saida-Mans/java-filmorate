@@ -56,12 +56,12 @@ public class UserController {
 
     @PutMapping
     public User update(@RequestBody User post) throws ValidationException {
-        log.info("Обновление нового пользователя: {}", post.getId());
+        log.info("Обновление пользователя с id: {}", post.getId());
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
         if (!users.containsKey(post.getId())) {
-            throw new ValidationException("Фильм с таким ID не найден");
+            throw new ValidationException("Пользователь с таким ID не найден");
         }
         if (post.getEmail() == null || post.getEmail().isBlank() || !post.getEmail().contains("@")) {
             throw new ValidationException("Email не может быть пустым и должен содержать символ '@'");
@@ -84,3 +84,4 @@ public class UserController {
         return oldPost;
     }
 }
+
