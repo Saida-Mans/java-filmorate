@@ -14,7 +14,7 @@ public class ErrorHandler {
     public ResponseEntity<Map<String, String>> handleValidationException(ValidationException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", e.getMessage())); // Возвращаем JSON с ключом "error"
+                .body(Map.of("error", e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

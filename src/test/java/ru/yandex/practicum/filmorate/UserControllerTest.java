@@ -106,6 +106,6 @@ class UserControllerTest {
         user.setId(999L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> userController.update(user));
-        assertEquals("Фильм с таким ID не найден", ex.getMessage());
+        assertEquals("Пользователь с таким ID не найден", ex.getMessage());
     }
 }
