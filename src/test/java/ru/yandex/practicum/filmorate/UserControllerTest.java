@@ -22,7 +22,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setLogin("testuser");
-        user.setBirthday(LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC));
+        user.setBirthday(LocalDate.now().minusYears(20));
         user.setName("Test User");
 
         User created = userController.create(user);
@@ -37,7 +37,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setLogin("testuser");
-        user.setBirthday(LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC));
+        user.setBirthday(LocalDate.now().minusYears(20));
         user.setName(null);
 
         User created = userController.create(user);
@@ -50,7 +50,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("invalidemail");
         user.setLogin("testuser");
-        user.setBirthday(LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC));
+        user.setBirthday(LocalDate.now().minusYears(20));
         user.setName("Name");
 
         ValidationException ex = assertThrows(ValidationException.class, () -> userController.create(user));
@@ -62,7 +62,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setLogin("test user");
-        user.setBirthday(LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC));
+        user.setBirthday(LocalDate.now().minusYears(20));
         user.setName("Name");
 
         ValidationException ex = assertThrows(ValidationException.class, () -> userController.create(user));
@@ -74,7 +74,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setLogin("testuser");
-        user.setBirthday(LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC));
+        user.setBirthday(LocalDate.now().minusYears(20));
         user.setName("Name");
         User created = userController.create(user);
 
@@ -82,7 +82,7 @@ class UserControllerTest {
         update.setId(created.getId());
         update.setEmail("updated@example.com");
         update.setLogin("updatedLogin");
-        update.setBirthday((LocalDate.now().minusYears(20).atStartOfDay().toInstant(ZoneOffset.UTC)));
+        update.setBirthday(LocalDate.now().minusYears(20));
         update.setName("Updated Name");
 
         User updated = userController.update(update);

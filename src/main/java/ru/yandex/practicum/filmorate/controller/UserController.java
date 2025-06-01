@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class UserController {
         if (post.getLogin() == null || post.getLogin().isBlank() || post.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
-        if (post.getBirthday() == null || !post.getBirthday().isBefore(Instant.now())) {
+        if (post.getBirthday() == null || !post.getBirthday().isBefore(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть пустой или в будущем");
         }
         if (post.getName() == null || post.getName().isBlank()) {
@@ -69,7 +70,7 @@ public class UserController {
         if (post.getLogin() == null || post.getLogin().isBlank() || post.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
-        if (post.getBirthday() == null || !post.getBirthday().isBefore(Instant.now())) {
+        if (post.getBirthday() == null || !post.getBirthday().isBefore(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть пустой или в будущем");
         }
         if (post.getName() == null || post.getName().isBlank()) {

@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +23,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Test Film");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120L);
 
         Film created = filmController.create(film);
@@ -40,7 +39,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName(" ");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
@@ -52,7 +51,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Film");
         film.setDescription("a".repeat(201)); // 201 символ
-        film.setReleaseDate(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
@@ -64,7 +63,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(1800, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
@@ -76,7 +75,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(-10L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
@@ -88,7 +87,7 @@ class FilmControllerTest {
         Film film = new Film();
         film.setName("Original Film");
         film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(100L);
         Film created = filmController.create(film);
 
@@ -96,7 +95,7 @@ class FilmControllerTest {
         update.setId(created.getId());
         update.setName("Updated Film");
         update.setDescription("Новое описание");
-        update.setReleaseDate(LocalDate.of(2010, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
+        update.setReleaseDate(LocalDate.of(2000, 1, 1));
         update.setDuration(150L);
 
         Film updated = filmController.update(update);
