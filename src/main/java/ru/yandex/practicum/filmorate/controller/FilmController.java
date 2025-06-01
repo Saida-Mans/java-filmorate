@@ -27,31 +27,33 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film post) throws ValidationException {
-        log.info("Создание нового фильма: {}", post);
-        try {
-            if (post.getName() == null || post.getName().isBlank()) {
-                throw new ValidationException("Название не может быть пустым");
-            }
-            if (post.getDescription() == null || post.getDescription().length() > 200) {
-                throw new ValidationException("Mаксимальная длина описания — 200 символов");
-            }
-            if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-                throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-            }
-            if (post.getDuration() <= 0) {
-                throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-            }
-
-            post.setId(getNextId());
-            films.put(post.getId(), post);
-            log.info("Фильм успешно создан с id={}", post.getId());
-            return post;
-        } catch (Exception e) {
-            log.error("Ошибка при создании фильма: {}", e.getMessage(), e);
-            throw e;
+            log.info("Создание нового фильма: {}", post);
+    try {
+        if (post.getName() == null || post.getName().isBlank()) {
+            throw new ValidationException("Название не может быть пустым");
         }
-    }
+        if (post.getDescription() == null || post.getDescription().isBlank()) {
+            throw new ValidationException("Описание не может быть пустым");
+        }
+        if (post.getDescription().length() > 200) {
+            throw new ValidationException("Mаксимальная длина описания — 200 символов");
+        }
+        if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
+        }
+        if (post.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
+        }
 
+        post.setId(getNextId());
+        films.put(post.getId(), post);
+        log.info("Фильм успешно создан с id={}", post.getId());
+        return post;
+    } catch (Exception e) {
+        log.error("Ошибка при создании фильма: {}", e.getMessage(), e);
+        throw e;
+    }
+}
     private long getNextId() {
         long currentMaxId = films.keySet()
                 .stream()
@@ -64,6 +66,7 @@ public class FilmController {
     @PutMapping
     public Film update(@RequestBody Film post) throws ValidationException {
         log.info("Обновление фильма с id={}", post.getId());
+
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
@@ -73,7 +76,10 @@ public class FilmController {
         if (post.getName() == null || post.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
         }
-        if (post.getDescription() == null || post.getDescription().length() > 200) {
+        if (post.getDescription() == null || post.getDescription().isBlank()) {
+            throw new ValidationException("Описание не может быть пустым");
+        }
+        if (post.getDescription().length() > 200) {
             throw new ValidationException("Mаксимальная длина описания — 200 символов");
         }
         if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
@@ -82,12 +88,13 @@ public class FilmController {
         if (post.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
-        Film oldFilm = films.get(post.getId());
 
+        Film oldFilm = films.get(post.getId());
         oldFilm.setName(post.getName());
         oldFilm.setDescription(post.getDescription());
         oldFilm.setReleaseDate(post.getReleaseDate());
         oldFilm.setDuration(post.getDuration());
+
         log.info("Фильм с id={} успешно обновлён", post.getId());
         return oldFilm;
     }
