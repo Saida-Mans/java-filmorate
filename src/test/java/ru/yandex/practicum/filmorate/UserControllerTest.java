@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
@@ -105,7 +106,7 @@ class UserControllerTest {
         User user = new User();
         user.setId(999L);
 
-        ValidationException ex = assertThrows(ValidationException.class, () -> userController.update(user));
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> userController.update(user));
         assertEquals("Пользователь с таким ID не найден", ex.getMessage());
     }
 }
