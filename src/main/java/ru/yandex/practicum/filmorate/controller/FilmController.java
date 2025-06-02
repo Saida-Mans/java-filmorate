@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -72,7 +73,7 @@ public class FilmController {
             throw new ValidationException("Id должен быть указан");
         }
         if (!films.containsKey(post.getId())) {
-            throw new ValidationException("Фильм с таким ID не найден");
+            throw new FilmNotFoundException("Фильм с таким ID не найден");
         }
         if (post.getName() == null || post.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
