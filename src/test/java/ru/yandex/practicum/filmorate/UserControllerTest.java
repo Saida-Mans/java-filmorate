@@ -46,30 +46,6 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_InvalidEmail_ThrowsException() {
-        User user = new User();
-        user.setEmail("invalidemail");
-        user.setLogin("testuser");
-        user.setBirthday(LocalDate.now().minusYears(20));
-        user.setName("Name");
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Email не может быть пустым и должен содержать символ '@'", ex.getMessage());
-    }
-
-    @Test
-    void createUser_LoginWithSpaces_ThrowsException() {
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setLogin("test user");
-        user.setBirthday(LocalDate.now().minusYears(20));
-        user.setName("Name");
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Логин не может быть пустым и содержать пробелы", ex.getMessage());
-    }
-
-    @Test
     void updateUser_Success() throws ValidationException {
         User user = new User();
         user.setEmail("test@example.com");

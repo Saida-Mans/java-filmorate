@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ch.qos.logback.classic.Logger;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
 
-    private static final Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
@@ -27,34 +28,17 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film post) throws ValidationException {
-            log.info("Создание нового фильма: {}", post);
-    try {
-        if (post.getName() == null || post.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
-        }
-        if (post.getDescription() == null || post.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустым");
-        }
-        if (post.getDescription().length() > 200) {
-            throw new ValidationException("Mаксимальная длина описания — 200 символов");
-        }
-        if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+    public Film create(@Valid @RequestBody Film post) throws ValidationException  {
+        log.info("Создание нового фильма: {}", post);
+        if (post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (post.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-        }
-
         post.setId(getNextId());
         films.put(post.getId(), post);
         log.info("Фильм успешно создан с id={}", post.getId());
+
         return post;
-    } catch (Exception e) {
-        log.error("Ошибка при создании фильма: {}", e.getMessage(), e);
-        throw e;
     }
-}
 
     private long getNextId() {
         long currentMaxId = films.keySet()
@@ -66,7 +50,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film post) throws ValidationException {
+    public Film update(@Valid @RequestBody Film post) throws ValidationException {
         log.info("Обновление фильма с id={}", post.getId());
 
         if (post.getId() == null) {
@@ -75,20 +59,8 @@ public class FilmController {
         if (!films.containsKey(post.getId())) {
             throw new FilmNotFoundException("Фильм с таким ID не найден");
         }
-        if (post.getName() == null || post.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
-        }
-        if (post.getDescription() == null || post.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустым");
-        }
-        if (post.getDescription().length() > 200) {
-            throw new ValidationException("Mаксимальная длина описания — 200 символов");
-        }
         if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        }
-        if (post.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
 
         Film oldFilm = films.get(post.getId());

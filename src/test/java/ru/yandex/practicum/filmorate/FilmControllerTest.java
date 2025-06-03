@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -36,30 +37,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void createFilm_EmptyName_ThrowsException() {
-        Film film = new Film();
-        film.setName(" ");
-        film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(120L);
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
-        assertEquals("Название не может быть пустым", ex.getMessage());
-    }
-
-    @Test
-    void createFilm_DescriptionTooLong_ThrowsException() {
-        Film film = new Film();
-        film.setName("Film");
-        film.setDescription("a".repeat(201)); // 201 символ
-        film.setReleaseDate(LocalDate.of(1800, 1, 1));
-        film.setDuration(120L);
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
-        assertEquals("Mаксимальная длина описания — 200 символов", ex.getMessage());
-    }
-
-    @Test
     void createFilm_ReleaseDateTooEarly_ThrowsException() {
         Film film = new Film();
         film.setName("Film");
@@ -69,18 +46,6 @@ class FilmControllerTest {
 
         ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals("Дата релиза — не раньше 28 декабря 1895 года", ex.getMessage());
-    }
-
-    @Test
-    void createFilm_NegativeDuration_ThrowsException() {
-        Film film = new Film();
-        film.setName("Film");
-        film.setDescription("Описание");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(-10L);
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> filmController.create(film));
-        assertEquals("Продолжительность фильма должна быть положительным числом", ex.getMessage());
     }
 
     @Test

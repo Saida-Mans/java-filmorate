@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ch.qos.logback.classic.Logger;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -26,17 +27,8 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User post) throws ValidationException {
+    public User create(@Valid @RequestBody User post) throws ValidationException {
         log.info("Создание нового пользователя: {}", post);
-        if (post.getEmail() == null || post.getEmail().isBlank() || !post.getEmail().contains("@")) {
-            throw new ValidationException("Email не может быть пустым и должен содержать символ '@'");
-        }
-        if (post.getLogin() == null || post.getLogin().isBlank() || post.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (post.getBirthday() == null || !post.getBirthday().isBefore(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть пустой или в будущем");
-        }
         if (post.getName() == null || post.getName().isBlank()) {
             post.setName(post.getLogin());
         }
@@ -56,22 +48,13 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User post) throws UserNotFoundException {
+    public User update(@Valid @RequestBody User post) throws UserNotFoundException {
         log.info("Обновление пользователя с id: {}", post.getId());
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
         if (!users.containsKey(post.getId())) {
             throw new UserNotFoundException("Пользователь с таким ID не найден");
-        }
-        if (post.getEmail() == null || post.getEmail().isBlank() || !post.getEmail().contains("@")) {
-            throw new ValidationException("Email не может быть пустым и должен содержать символ '@'");
-        }
-        if (post.getLogin() == null || post.getLogin().isBlank() || post.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (post.getBirthday() == null || !post.getBirthday().isBefore(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть пустой или в будущем");
         }
         if (post.getName() == null || post.getName().isBlank()) {
             post.setName(post.getLogin());
