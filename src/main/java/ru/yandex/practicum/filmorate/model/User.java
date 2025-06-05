@@ -9,20 +9,22 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class User {
+
+    @NotNull(message = "ID обязателен при обновлении", groups = OnUpdate.class)
     private Long id;
 
-    @Email(message = "Email должен быть валидным")
-    @NotBlank(message = "Email не может быть пустым")
+    @NotBlank(message = "Email обязателен при создании", groups = OnCreate.class)
+    @Email(message = "Email должен быть корректным", groups = {OnCreate.class, OnUpdate.class})
     private String email;
 
-    @NotBlank(message = "Логин не может быть пустым")
-    @Pattern(regexp = "\\S+", message = "Логин не должен содержать пробелов")
+    @NotBlank(message = "Логин не может быть пустым", groups = {OnCreate.class, OnUpdate.class})
+    @Pattern(regexp = "\\S+", message = "Логин не должен содержать пробелов", groups = {OnCreate.class, OnUpdate.class})
     private String login;
 
     private String name;
 
-    @NotNull(message = "Дата рождения не может быть пустой")
-    @Past(message = "Дата рождения должна быть в прошлом")
+    @NotNull(message = "Дата рождения не может быть пустой", groups = {OnCreate.class, OnUpdate.class})
+    @Past(message = "Дата рождения не должна быть в будущем", groups = {OnCreate.class, OnUpdate.class})
     private LocalDate birthday;
 }
 

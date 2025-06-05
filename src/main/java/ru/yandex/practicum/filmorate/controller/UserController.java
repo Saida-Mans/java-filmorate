@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.OnCreate;
+import ru.yandex.practicum.filmorate.model.OnUpdate;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -26,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User post) throws ValidationException {
+    public User create(@Validated(OnCreate.class) @RequestBody User post) throws ValidationException {
         log.info("Создание нового пользователя: {}", post);
         if (post.getName() == null || post.getName().isBlank()) {
             post.setName(post.getLogin());
@@ -47,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User post) throws UserNotFoundException {
+    public User update(@Validated(OnUpdate.class) @RequestBody User post) throws UserNotFoundException {
         log.info("Обновление пользователя с id: {}", post.getId());
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
