@@ -32,7 +32,7 @@ public class Film {
     @Positive(message = "Продолжительность фильма должно быть положительным числом")
     private Long duration;
 
-    private Set<Long> likes=new HashSet<>();
+    private Set<Long> likes = new HashSet<>();
 
     public void addLike(Long user) {
         likes.add(user);
