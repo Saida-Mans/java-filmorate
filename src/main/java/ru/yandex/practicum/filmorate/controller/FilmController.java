@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -21,8 +20,8 @@ public class FilmController {
     private FilmService filmService;
 
     @Autowired
-    public FilmController(FilmService filmService){
-        this.filmService=filmService;
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping
@@ -41,17 +40,17 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable long id,@PathVariable long userId){
+    public void addLike(@PathVariable long id,@PathVariable long userId) {
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void removeLike(@PathVariable long id, @PathVariable long userId){
+    public void removeLike(@PathVariable long id, @PathVariable long userId) {
         filmService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam (defaultValue = "10" )Integer count){
+    public List<Film> getTopFilms(@RequestParam (defaultValue = "10" )Integer count) {
         if (count <= 0) {
             throw new ValidationException("Параметр count должен быть положительным числом.");
         }
