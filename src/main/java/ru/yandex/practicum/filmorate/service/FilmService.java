@@ -18,7 +18,7 @@ public class FilmService {
     private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage){
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
 
         this.filmStorage=filmStorage;
         this.userStorage=userStorage;
@@ -52,15 +52,15 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<Film> findAll(){
+    public Collection<Film> findAll() {
         return filmStorage.findAll();
     }
 
-    public Film create (Film post){
+    public Film create (Film post) {
         return filmStorage.add(post);
     }
 
-    public Film update(Film post){
+    public Film update(Film post) {
         return filmStorage.update(post);
     }
 }

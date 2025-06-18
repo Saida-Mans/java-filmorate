@@ -32,7 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
         return ++currentMaxId;
     }
 
-    public User update(User post){
+    public User update(User post) {
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
@@ -50,7 +50,7 @@ public class InMemoryUserStorage implements UserStorage {
         return oldPost;
     }
 
-    public User findById(Long id){
+    public User findById(Long id) {
         if (id == null || id <= 0) {
             throw new ValidationException("Id пользователя должен быть положительным числом.");
         }
@@ -61,11 +61,11 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public Collection<User> findAll(){
+    public Collection<User> findAll() {
         return users.values();
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         if (!users.containsKey(id)) {
             throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
         }

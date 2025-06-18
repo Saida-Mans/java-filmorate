@@ -36,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return ++currentMaxId;
     }
 
-    public Film update(Film post){
+    public Film update(Film post) {
         if (post.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
@@ -55,7 +55,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return oldFilm;
     }
 
-    public Film findById(Long id){
+    public Film findById(Long id) {
         Film film = films.get(id);
         if (film == null) {
             throw new FilmNotFoundException("Фильм с id " + id + " не найден.");
@@ -63,11 +63,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    public Collection<Film> findAll(){
+    public Collection<Film> findAll() {
         return films.values();
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         if (!films.containsKey(id)) {
             throw new FilmNotFoundException("Фильм с id " + id + " не найден.");
         }
