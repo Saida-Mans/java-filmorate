@@ -40,7 +40,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable long id,@PathVariable long userId) {
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
         filmService.addLike(id, userId);
     }
 
@@ -50,7 +50,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam (defaultValue = "10" )Integer count) {
+    public List<Film> getTopFilms(@RequestParam (defaultValue = "10" ) Integer count) {
         if (count <= 0) {
             throw new ValidationException("Параметр count должен быть положительным числом.");
         }
