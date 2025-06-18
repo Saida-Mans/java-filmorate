@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -27,31 +28,26 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(ValidationException e) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", e.getMessage()));
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidationException(final ValidationException e) {
+        return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException e) {
-        log.warn("User not found: {}", e.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", e.getMessage()));
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUserNotFound(final UserNotFoundException e) {
+        return (Map.of("error", e.getMessage()));
     }
 
     @ExceptionHandler(FilmNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleFilmNotFound(FilmNotFoundException e) {
-        log.warn("Film not found: {}", e.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", e.getMessage()));
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String>  handleFilmNotFound(final FilmNotFoundException e) {
+        return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleOtherExceptions(Exception e) {
-        log.error("Unexpected error occurred", e);
-        return new ResponseEntity<>("Внутренняя ошибка сервера: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Map<String, String>> handleOtherExceptions(final Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Внутренняя ошибка сервера: " + e.getMessage()));
     }
 }
