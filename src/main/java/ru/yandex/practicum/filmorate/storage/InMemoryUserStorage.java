@@ -14,7 +14,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
 
-    public User add (User post) {
+    public User add(User post) {
         if (post.getName() == null || post.getName().isBlank()) {
             post.setName(post.getLogin());
         }
