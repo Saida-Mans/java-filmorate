@@ -20,8 +20,8 @@ public class FilmService {
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
 
-        this.filmStorage=filmStorage;
-        this.userStorage=userStorage;
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public void addLike(Long filmId, Long userId) {
@@ -56,7 +56,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film create (Film post) {
+    public Film create(Film post) {
         return filmStorage.add(post);
     }
 
