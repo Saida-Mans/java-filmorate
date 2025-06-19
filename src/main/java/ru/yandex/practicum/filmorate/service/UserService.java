@@ -94,7 +94,7 @@ public class UserService {
         User user = userStorage.findById(id);
         if (user == null) {
             log.error("Пользователь с id {} не найден.", id);
-            throw new UserNotFoundException("Пользователь с таким " + id + " не найден");
+            throw new UserNotFoundException("Пользователь с таким ID не найден");
         }
         return user;
     }

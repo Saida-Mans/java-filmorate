@@ -63,7 +63,7 @@ public class FilmService {
 
     private void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
+            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
@@ -76,7 +76,7 @@ public class FilmService {
     private User getUserOrThrow(Long id) {
         User user = userStorage.findById(id);
         if (user == null) {
-            throw new UserNotFoundException("Пользователь с таким " + id + " не найден");
+            throw new UserNotFoundException("Пользователь с таким ID не найден");
         }
         return user;
     }
