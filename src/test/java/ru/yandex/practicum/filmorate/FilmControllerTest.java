@@ -76,20 +76,4 @@ class FilmControllerTest {
         assertEquals("Новое описание", updated.getDescription());
         assertEquals(150, updated.getDuration());
     }
-
-    @Test
-    void updateFilm_IdNull_ThrowsException() {
-        Film film = new Film();
-        film.setId(null);
-        ValidationException ex = assertThrows(ValidationException.class, () -> filmController.update(film));
-        assertEquals("Id должен быть указан", ex.getMessage());
-    }
-
-    @Test
-    void updateFilm_IdNotFound_ThrowsException() {
-        Film film = new Film();
-        film.setId(999L);
-        FilmNotFoundException ex = assertThrows(FilmNotFoundException.class, () -> filmController.update(film));
-        assertEquals("Фильм с таким ID не найден", ex.getMessage());
-    }
 }

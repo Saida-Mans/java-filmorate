@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -23,25 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
         return post;
     }
 
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
-    }
-
     public User update(User post) {
-        if (post.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
-        }
-        if (!users.containsKey(post.getId())) {
-            throw new UserNotFoundException("Пользователь с таким ID не найден");
-        }
-        if (post.getName() == null || post.getName().isBlank()) {
-            post.setName(post.getLogin());
-        }
         User oldPost = users.get(post.getId());
         oldPost.setEmail(post.getEmail());
         oldPost.setLogin(post.getLogin());
@@ -51,13 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User findById(Long id) {
-        if (id == null || id <= 0) {
-            throw new ValidationException("Id пользователя должен быть положительным числом.");
-        }
         User user = users.get(id);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
-        }
         return user;
     }
 
@@ -65,10 +39,12 @@ public class InMemoryUserStorage implements UserStorage {
         return users.values();
     }
 
-    public void delete(Long id) {
-        if (!users.containsKey(id)) {
-            throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
-        }
-        users.remove(id);
+    private long getNextId() {
+        long currentMaxId = users.keySet()
+                .stream()
+                .mapToLong(id -> id)
+                .max()
+                .orElse(0);
+        return ++currentMaxId;
     }
 }

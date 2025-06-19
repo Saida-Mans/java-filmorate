@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -11,22 +10,19 @@ import ru.yandex.practicum.filmorate.model.OnCreate;
 import ru.yandex.practicum.filmorate.model.OnUpdate;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.List;
 
+@Slf4j
+@Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public Collection<User> findAll() {
@@ -44,22 +40,22 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+    public void addFriend(@PathVariable @Positive(message = "id должен быть положительным") long id, @PathVariable @Positive(message = "friendId должен быть положительным") long friendId) {
          userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void removeFriend(@PathVariable long id,@PathVariable long friendId) {
+    public void removeFriend(@PathVariable @Positive(message = "id должен быть положительным") long id, @PathVariable @Positive(message = "friendId должен быть положительным") long friendId) {
         userService.removeFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable long id) {
+    public List<User> getFriends(@PathVariable @Positive(message = "id должен быть положительным") long id) {
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public  List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+    public  List<User> getCommonFriends(@PathVariable @Positive(message = "id должен быть положительным") long id, @PathVariable @Positive(message = "otherId должен быть положительным") long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 }
