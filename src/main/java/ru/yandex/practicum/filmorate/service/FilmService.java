@@ -76,7 +76,7 @@ public class FilmService {
     private User getUserOrThrow(Long id) {
         User user = userStorage.findById(id);
         if (user == null) {
-            throw new UserNotFoundException("Пользователь с id " + id + " не найден");
+            throw new UserNotFoundException("Пользователь с таким " + id + " не найден");
         }
         return user;
     }
