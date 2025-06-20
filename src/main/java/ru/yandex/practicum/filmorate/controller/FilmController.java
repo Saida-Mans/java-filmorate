@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class FilmController {
 
     private final FilmService filmService;
 
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     @GetMapping
     public Collection<Film> findAll() {
         return filmService.findAll();
@@ -29,11 +33,19 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film post) throws ValidationException  {
+        if (post.getReleaseDate() != null &&
+                post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        }
         return filmService.create(post);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film post) throws ValidationException {
+            if (post.getReleaseDate() != null &&
+                    post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+                throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        }
         return filmService.update(post);
     }
 

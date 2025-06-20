@@ -12,4 +12,8 @@ public interface UserStorage {
     User findById(Long id);
 
     Collection<User> findAll();
+
+    boolean containsEmail(String email);
+    void addEmail(String email);
+    void removeEmail(String email);
 }

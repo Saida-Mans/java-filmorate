@@ -3,14 +3,15 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
+
+    private final Set<String> emails = new HashSet<>();
 
     public User add(User post) {
         if (post.getName() == null || post.getName().isBlank()) {
@@ -33,6 +34,17 @@ public class InMemoryUserStorage implements UserStorage {
     public User findById(Long id) {
         User user = users.get(id);
         return user;
+    }
+    public boolean containsEmail(String email) {
+        return emails.contains(email);
+    }
+
+    public void addEmail(String email) {
+        emails.add(email);
+    }
+
+    public void removeEmail(String email) {
+        emails.remove(email);
     }
 
     public Collection<User> findAll() {

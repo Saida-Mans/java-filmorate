@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserStorage userStorage;
-
-    private final Set<String> emails = new HashSet<>();
 
     public void addFriend(Long userId, Long friendId) {
         User user = getUserOrThrow(userId);
@@ -64,11 +61,11 @@ public class UserService {
     }
 
     public User create(User user) {
-        if (emails.contains(user.getEmail())) {
+        if (userStorage.containsEmail(user.getEmail())) {
             throw new ValidationException("Email уже занят: " + user.getEmail());
         }
         User created = userStorage.add(user);
-        emails.add(created.getEmail());
+        userStorage.addEmail(created.getEmail());
         return created;
     }
 
@@ -78,11 +75,11 @@ public class UserService {
         }
         User user = getUserOrThrow(post.getId());
         if (!post.getEmail().equals(user.getEmail())) {
-            if (emails.contains(post.getEmail())) {
+            if (userStorage.containsEmail(post.getEmail())) {
                 throw new ValidationException("Email уже занят: " + post.getEmail());
             }
-            emails.remove(user.getEmail());
-            emails.add(post.getEmail());
+            userStorage.removeEmail(user.getEmail());
+            userStorage.addEmail(post.getEmail());
         }
         if (post.getName() == null || post.getName().isBlank()) {
             post.setName(post.getLogin());

@@ -22,7 +22,6 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
 
     public void addLike(Long filmId, Long userId) {
@@ -33,7 +32,6 @@ public class FilmService {
 
     public void removeLike(Long filmId, Long userId) {
         Film film = getFilmOrThrow(filmId);
-        User user = getUserOrThrow(userId);
         film.removeLike(userId);
     }
 
@@ -62,9 +60,6 @@ public class FilmService {
     }
 
     private void validateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        }
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
