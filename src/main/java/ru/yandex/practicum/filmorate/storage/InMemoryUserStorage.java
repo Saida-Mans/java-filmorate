@@ -35,6 +35,7 @@ public class InMemoryUserStorage implements UserStorage {
         User user = users.get(id);
         return user;
     }
+
     public boolean containsEmail(String email) {
         return emails.contains(email);
     }
