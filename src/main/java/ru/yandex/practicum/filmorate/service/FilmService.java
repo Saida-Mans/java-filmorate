@@ -31,6 +31,7 @@ public class FilmService {
 
     public void removeLike(Long filmId, Long userId) {
         Film film = getFilmOrThrow(filmId);
+        getUserOrThrow(userId);
         film.removeLike(userId);
     }
 
