@@ -1,75 +1,66 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+@Slf4j
+@Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
 
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService filmService;
+
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("Вызван метод findAll()");
-        return films.values();
+        return filmService.findAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film post) throws ValidationException  {
-        log.info("Создание нового фильма: {}", post);
-        if (post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (post.getReleaseDate() != null &&
+                post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        post.setId(getNextId());
-        films.put(post.getId(), post);
-        log.info("Фильм успешно создан с id={}", post.getId());
-
-        return post;
-    }
-
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+        return filmService.create(post);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film post) throws ValidationException {
-        log.info("Обновление фильма с id={}", post.getId());
-
-        if (post.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
+            if (post.getReleaseDate() != null &&
+                    post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+                throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (!films.containsKey(post.getId())) {
-            throw new FilmNotFoundException("Фильм с таким ID не найден");
-        }
-        if (post.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        }
+        return filmService.update(post);
+    }
 
-        Film oldFilm = films.get(post.getId());
-        oldFilm.setName(post.getName());
-        oldFilm.setDescription(post.getDescription());
-        oldFilm.setReleaseDate(post.getReleaseDate());
-        oldFilm.setDuration(post.getDuration());
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable @Positive(message = "id должен быть положительным") long id, @PathVariable @Positive(message = "userId должен быть положительным") long userId) {
+        filmService.addLike(id, userId);
+    }
 
-        log.info("Фильм с id={} успешно обновлён", post.getId());
-        return oldFilm;
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable @Positive(message = "id должен быть положительным") long id, @PathVariable @Positive(message = "userId должен быть положительным") long userId) {
+        filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getTopFilms(@RequestParam (defaultValue = "10") @Min(value = 1, message = "Параметр count должен быть не меньше 1") Integer count) {
+        return filmService.getTopFilms(count);
     }
 }
