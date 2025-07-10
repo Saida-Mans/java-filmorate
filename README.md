@@ -8,7 +8,6 @@
 
 
 
-
 ##  Примеры SQL-запросов
 SELECT f.id, f.name, COUNT(fl.user_id) AS like_count
 FROM films f
