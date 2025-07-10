@@ -31,14 +31,23 @@ public class User {
     private LocalDate birthday;
 
     @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
+    private Set<Friendship> friends = new HashSet<>();
 
     public void addFriend(Long friendId) {
-        friends.add(friendId);
+        friends.add(new Friendship(friendId, FriendshipStatus.PENDING));
     }
 
     public void removeFriend(Long friendId) {
-        friends.remove(friendId);
+        friends.removeIf(f -> f.getFriendId().equals(friendId));
+    }
+
+    public void confirmFriend(Long friendId) {
+        for (Friendship friendship : friends) {
+            if (friendship.getFriendId().equals(friendId)) {
+                friendship.setStatus(FriendshipStatus.CONFIRMED);
+                break;
+            }
+        }
     }
 }
 
