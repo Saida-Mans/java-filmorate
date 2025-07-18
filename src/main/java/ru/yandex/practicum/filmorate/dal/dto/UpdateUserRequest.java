@@ -6,10 +6,15 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateUserRequest {
+
     private Long id;
+
     private String  email;
+
     private String login;
+
     private String name;
+
     private LocalDate birthday;
 
     public Long getId() {
@@ -31,6 +36,7 @@ public class UpdateUserRequest {
     public boolean hasBirthday() {
         return birthday != null;
     }
+
     public boolean hasId() {
         return id != null;
     }

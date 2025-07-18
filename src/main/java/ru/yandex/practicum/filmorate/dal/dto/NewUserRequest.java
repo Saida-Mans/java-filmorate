@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class NewUserRequest {
+
     @NotBlank(message = "Email обязателен")
     @Email(message = "Email должен быть корректным")
     private String email;
