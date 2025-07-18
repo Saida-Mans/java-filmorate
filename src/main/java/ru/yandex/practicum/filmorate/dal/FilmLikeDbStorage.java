@@ -1,11 +1,8 @@
 package ru.yandex.practicum.filmorate.dal;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.HashSet;
 import java.util.Set;
