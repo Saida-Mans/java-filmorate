@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @Repository("userDbStorage")
 @Primary
-public class UserDbStorage extends BaseRepository<User> implements UserStorage{
+public class UserDbStorage extends BaseRepository<User> implements UserStorage {
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);
