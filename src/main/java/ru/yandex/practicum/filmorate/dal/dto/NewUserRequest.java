@@ -8,12 +8,12 @@ import java.time.LocalDate;
 @Data
 public class NewUserRequest {
 
-    @NotBlank(message = "Email обязателен")
-    @Email(message = "Email должен быть корректным")
+    @NotBlank(message = "Email обязателен", groups = OnCreate.class)
+    @Email(message = "Email должен быть корректным", groups = OnCreate.class)
     private String email;
 
-    @NotBlank(message = "Логин обязателен")
-    @Pattern(regexp = "\\S+", message = "Логин не должен содержать пробелов")
+    @NotBlank(message = "Логин обязателен", groups = OnCreate.class)
+    @Pattern(regexp = "\\S+", message = "Логин не должен содержать пробелов", groups = OnCreate.class)
     private String login;
 
     private String name;
