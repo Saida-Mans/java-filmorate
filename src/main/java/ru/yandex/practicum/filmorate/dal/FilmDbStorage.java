@@ -6,9 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.dal.FilmGenreDbStorage;
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +17,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     private final FilmGenreDbStorage filmGenreDbStorage;
     private final FilmLikeDbStorage filmLikeDbStorage;
+
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper, FilmGenreDbStorage filmGenreDbStorage, FilmLikeDbStorage filmLikeDbStorage) {
         super(jdbc, mapper);
         this.filmGenreDbStorage = filmGenreDbStorage;
@@ -77,7 +76,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     }
 
     public List<Film> findTopFilms(int count) {
-        String sql = """ 
+        String sql = """
         SELECT f.*, r.name AS rating_name
         FROM films f
         JOIN rating r ON f.rating_id = r.id
