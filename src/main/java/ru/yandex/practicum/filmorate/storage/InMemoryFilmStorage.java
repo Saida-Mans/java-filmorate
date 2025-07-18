@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -33,6 +34,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Collection<Film> findAll() {
         return films.values();
+    }
+
+    @Override
+    public List<Film> findTopFilms(int count) {
+        return null;
     }
 
     private long getNextId() {

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,5 +61,17 @@ public class ErrorHandler {
     public ResponseEntity<Map<String, String>> handleOtherExceptions(final Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Внутренняя ошибка сервера: " + e.getMessage()));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFound(NotFoundException e) {
+        return new ResponseEntity<>(
+                Map.of(
+                        "error", "Not Found",
+                        "message", e.getMessage(),
+                        "timestamp", LocalDateTime.now()
+                ),
+                HttpStatus.NOT_FOUND
+        );
     }
 }

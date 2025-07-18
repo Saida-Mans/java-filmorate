@@ -1,54 +1,70 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dal.FriendshipDbStorage;
+import ru.yandex.practicum.filmorate.dal.dto.NewUserRequest;
+import ru.yandex.practicum.filmorate.dal.dto.UpdateUserRequest;
+import ru.yandex.practicum.filmorate.dal.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.model.Friendship;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FriendshipDbStorage friendshipDbStorage;
+
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendshipDbStorage friendshipDbStorage) {
+        this.userStorage = userStorage;
+        this.friendshipDbStorage = friendshipDbStorage;
+    }
 
     public void addFriend(Long userId, Long friendId) {
-        User user = getUserOrThrow(userId);
-        User friend = getUserOrThrow(friendId);
+        getUserOrThrow(userId);
+        getUserOrThrow(friendId);
         log.info("Adding friend relationship: user {} with friend {}", userId, friendId);
-        user.addFriend(friendId);
-        friend.addFriend(userId);
+        friendshipDbStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {
-        User user = getUserOrThrow(userId);
-        User friend = getUserOrThrow(friendId);
-
-        user.removeFriend(friendId);
-        friend.removeFriend(userId);
+        getUserOrThrow(userId);
+        getUserOrThrow(friendId);
+        friendshipDbStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriends(Long userId) {
-        User user = getUserOrThrow(userId);
-        return user.getFriends().stream()
+       getUserOrThrow(userId);
+        List<Friendship> friendships = friendshipDbStorage.findFriendsOfUser(userId);
+        return friendships.stream()
+                .map(Friendship::getFriendId)
                 .map(this::getUserOrThrow)
                 .collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(Long userId, Long otherUserId) {
-        User user = getUserOrThrow(userId);
-        User otherUser = getUserOrThrow(otherUserId);
+        getUserOrThrow(userId);
+        getUserOrThrow(otherUserId);
+        Set<Long> userFriendIds = friendshipDbStorage.findFriendsOfUser(userId).stream()
+                .map(Friendship::getFriendId)
+                .collect(Collectors.toSet());
 
-        Set<Long> commonIds = user.getFriends().stream()
-                .filter(id -> otherUser.getFriends().contains(id))
+        Set<Long> otherFriendIds = friendshipDbStorage.findFriendsOfUser(otherUserId).stream()
+                .map(Friendship::getFriendId)
+                .collect(Collectors.toSet());
+
+        Set<Long> commonIds = userFriendIds.stream()
+                .filter(otherFriendIds::contains)
                 .collect(Collectors.toSet());
 
         return commonIds.stream()
@@ -56,35 +72,52 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<User> findAll() {
-        return userStorage.findAll();
+    public List<UserDto> getUsers() {
+        return userStorage.findAll()
+                .stream()
+                .map(UserMapper::mapToUserDto)
+                .collect(Collectors.toList());
     }
 
-    public User create(User user) {
-        if (userStorage.containsEmail(user.getEmail())) {
-            throw new ValidationException("Email уже занят: " + user.getEmail());
+    public UserDto create(NewUserRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new ValidationException("Емейл должен быть указан");
         }
-        User created = userStorage.add(user);
-        userStorage.addEmail(created.getEmail());
-        return created;
+
+        if (userStorage.containsEmail(request.getEmail())) {
+            throw new ValidationException("Данный имейл уже используется");
+        }
+
+        User user = UserMapper.mapToUser(request);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+        user = userStorage.add(user);
+
+        return UserMapper.mapToUserDto(user);
     }
 
-    public User update(User post) {
-        if (post.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
+    public UserDto update(UpdateUserRequest request) {
+        if (request == null) {
+            throw new ValidationException("Тело запроса не должно быть пустым");
         }
-        User user = getUserOrThrow(post.getId());
-        if (!post.getEmail().equals(user.getEmail())) {
-            if (userStorage.containsEmail(post.getEmail())) {
-                throw new ValidationException("Email уже занят: " + post.getEmail());
+        if (!request.hasId()) {
+            throw new ValidationException("ID обязателен для обновления пользователя");
+        }
+        User existing = getUserOrThrow(request.getId());
+
+        if (request.hasEmail()) existing.setEmail(request.getEmail());
+        if (request.hasLogin()) existing.setLogin(request.getLogin());
+        if (request.hasBirthday()) existing.setBirthday(request.getBirthday());
+
+        if (request.hasName()) {
+            if (request.getName().isBlank()) {
+                existing.setName(existing.getLogin());
+            } else {
+                existing.setName(request.getName());
             }
-            userStorage.removeEmail(user.getEmail());
-            userStorage.addEmail(post.getEmail());
         }
-        if (post.getName() == null || post.getName().isBlank()) {
-            post.setName(post.getLogin());
-        }
-        return userStorage.update(post);
+        return UserMapper.mapToUserDto(userStorage.update(existing));
     }
 
     public User getUserOrThrow(Long id) {
