@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.FilmGenreDbStorage;
 import ru.yandex.practicum.filmorate.dal.FilmLikeDbStorage;
 import ru.yandex.practicum.filmorate.dal.GenreDbStorage;
 import ru.yandex.practicum.filmorate.dal.RatingDbStorage;
+import ru.yandex.practicum.filmorate.dal.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dal.dto.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dal.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
@@ -27,10 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
 
-    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
 
-    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     private final FilmGenreDbStorage filmGenreDbStorage;
@@ -41,9 +39,7 @@ public class FilmService {
 
     private final GenreDbStorage genreDbStorage;
 
-    public FilmService(
-            @Qualifier("filmDbStorage") FilmStorage filmStorage,
-            @Qualifier("userDbStorage") UserStorage userStorage,
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage,
             FilmGenreDbStorage filmGenreDbStorage,
             FilmLikeDbStorage filmLikeDbStorage,
             RatingDbStorage ratingDbStorage, GenreDbStorage genreDbStorage) {
@@ -74,12 +70,18 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<Film> findAll() {
+    public Collection<FilmDto> findAll() {
         Collection<Film> films = filmStorage.findAll();
+        Map<Long, Set<Genre>> genresByFilmId = filmGenreDbStorage.loadGenresForFilms(films);
+        Map<Long, Set<Long>> likesByFilmId = filmLikeDbStorage.loadLikesForFilms(films);
+
         for (Film film : films) {
-            film.setGenres(filmGenreDbStorage.findGenresByFilmId(film.getId()));
+            film.setGenres(genresByFilmId.getOrDefault(film.getId(), Set.of()));
+            film.setLikes(likesByFilmId.getOrDefault(film.getId(), Set.of()));
         }
-        return films;
+        return films.stream()
+                .map(f -> FilmMapper.mapToFilmDto(f, f.getRating()))
+                .collect(Collectors.toList());
     }
 
     public Film create(NewFilmRequest request) {
@@ -157,8 +159,10 @@ public class FilmService {
         return film;
     }
 
-    public List<Film> getPopularFilms(int count) {
-        return filmStorage.findTopFilms(count);
+    public List<FilmDto> getPopularFilms(int count) {
+        return filmStorage.findTopFilms(count).stream()
+                .map(film -> FilmMapper.mapToFilmDto(film, film.getRating()))
+                .collect(Collectors.toList());
     }
 
     public Film getById(Long id) {

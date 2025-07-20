@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.FriendshipDbStorage;
 import ru.yandex.practicum.filmorate.dal.dto.NewUserRequest;
@@ -25,7 +24,7 @@ public class UserService {
     private final UserStorage userStorage;
     private final FriendshipDbStorage friendshipDbStorage;
 
-    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendshipDbStorage friendshipDbStorage) {
+    public UserService(UserStorage userStorage, FriendshipDbStorage friendshipDbStorage) {
         this.userStorage = userStorage;
         this.friendshipDbStorage = friendshipDbStorage;
     }

@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.mapper.GenreRowMapper;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/genres")
@@ -21,9 +20,7 @@ public class GenreController {
 
     @GetMapping
     public List<GenreDto> getAllGenres() {
-        return genreService.getAllGenres().stream()
-                .map(GenreRowMapper::toDto)
-                .collect(Collectors.toList());
+        return genreService.getAllGenres();
     }
 
     @GetMapping("/{id}")

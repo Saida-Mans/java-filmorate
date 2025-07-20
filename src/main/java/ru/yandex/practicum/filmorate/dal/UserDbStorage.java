@@ -10,8 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.sql.Date;
 import java.util.Collection;
 
-@Repository("userDbStorage")
-@Primary
+@Repository
 public class UserDbStorage extends BaseRepository<User> implements UserStorage {
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {

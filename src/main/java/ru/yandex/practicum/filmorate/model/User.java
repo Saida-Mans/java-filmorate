@@ -29,25 +29,5 @@ public class User {
     @NotNull(message = "Дата рождения не может быть пустой", groups = {OnCreate.class, OnUpdate.class})
     @PastOrPresent(message = "Дата рождения не должна быть в будущем", groups = {OnCreate.class, OnUpdate.class})
     private LocalDate birthday;
-
-    @JsonIgnore
-    private Set<Friendship> friends = new HashSet<>();
-
-    public void addFriend(Long friendId) {
-        friends.add(new Friendship(id, friendId, FriendshipStatus.PENDING));
-    }
-
-    public void removeFriend(Long friendId) {
-        friends.removeIf(f -> f.getFriendId().equals(friendId));
-    }
-
-    public void confirmFriend(Long friendId) {
-        for (Friendship friendship : friends) {
-            if (friendship.getFriendId().equals(friendId)) {
-                friendship.setStatus(FriendshipStatus.CONFIRMED);
-                break;
-            }
-        }
-    }
 }
 
