@@ -1,13 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dal.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dal.dto.NewFilmRequest;
+import ru.yandex.practicum.filmorate.dal.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,29 +29,28 @@ public class FilmController {
 
     private final FilmService filmService;
 
-    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-
     @GetMapping
-    public Collection<Film> findAll() {
+    public Collection<FilmDto> findAll() {
         return filmService.findAll();
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film post) throws ValidationException  {
-        if (post.getReleaseDate() != null &&
-                post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
+    public ResponseEntity<FilmDto> create(@RequestBody @Valid NewFilmRequest request) {
+        if (request.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
         }
-        return filmService.create(post);
+        Film film = filmService.create(request);
+        return ResponseEntity.ok(FilmMapper.mapToFilmDto(film, film.getRating()));
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film post) throws ValidationException {
+    public ResponseEntity<FilmDto> update(@Valid @RequestBody UpdateFilmRequest post) throws ValidationException {
             if (post.getReleaseDate() != null &&
                     post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        return filmService.update(post);
+        Film film = filmService.update(post);
+        return ResponseEntity.ok(FilmMapper.mapToFilmDto(film, film.getRating()));
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -60,7 +64,14 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam (defaultValue = "10") @Min(value = 1, message = "Параметр count должен быть не меньше 1") Integer count) {
-        return filmService.getTopFilms(count);
+    public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopularFilms(count);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FilmDto> getFilmById(@PathVariable Long id) {
+        Film film = filmService.getById(id);
+        Rating rating = film.getRating();
+        return ResponseEntity.ok(FilmMapper.mapToFilmDto(film, rating));
     }
 }
