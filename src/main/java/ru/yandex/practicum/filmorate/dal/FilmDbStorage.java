@@ -91,7 +91,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                     .map(id -> "?")
                     .collect(Collectors.joining(", ", "(", ")"));
             String sql = """
-            SELECT 
+            SELECT
                 f.id AS film_id,
                 f.name,
                 f.description,
@@ -105,7 +105,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             JOIN rating r ON f.rating_id = r.id
             LEFT JOIN film_genres fg ON f.id = fg.film_id
             LEFT JOIN genres g ON fg.genre_id = g.id
-            WHERE f.id IN 
+            WHERE f.id IN
         """ + inSql;
             return jdbc.query(con -> {
                 var ps = con.prepareStatement(sql);
