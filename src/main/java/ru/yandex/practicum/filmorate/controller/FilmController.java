@@ -41,12 +41,13 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody UpdateFilmRequest post) throws ValidationException {
+    public ResponseEntity<FilmDto> update(@Valid @RequestBody UpdateFilmRequest post) throws ValidationException {
             if (post.getReleaseDate() != null &&
                     post.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
-        return filmService.update(post);
+        Film film = filmService.update(post);
+        return ResponseEntity.ok(FilmMapper.mapToFilmDto(film, film.getRating()));
     }
 
     @PutMapping("/{id}/like/{userId}")
