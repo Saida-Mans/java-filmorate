@@ -88,8 +88,8 @@ public class FilmService {
         if (request.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
         }
-        Rating rating = ratingDbStorage.findById(request.getMpa())
-                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + request.getMpa() + " не найден"));
+        Rating rating = ratingDbStorage.findById(request.getMpa().getId())
+                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + request.getMpa().getId() + " не найден"));
         Film film = FilmMapper.mapToFilm(request, rating);
         validateFilm(film);
         Set<Genre> genres = film.getGenres();
@@ -104,6 +104,7 @@ public class FilmService {
         }
         Set<Genre> uniqueGenres = FilmMapper.deduplicateGenres(film.getGenres());
         film.setGenres(uniqueGenres);
+
         Film saved = filmStorage.add(film);
         filmGenreDbStorage.deleteGenresByFilmId(saved.getId());
         filmGenreDbStorage.addGenresToFilm(saved.getId(), uniqueGenres);
