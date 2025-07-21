@@ -23,10 +23,5 @@ public class NewFilmRequest {
 
     private Set<Genre> genres;
 
-    private MpaRequest mpa;
-
-    @Data
-    public static class MpaRequest {
-        private Long id;
-    }
+    private Long mpa;
 }

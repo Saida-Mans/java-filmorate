@@ -88,8 +88,8 @@ public class FilmService {
         if (request.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
         }
-        Rating rating = ratingDbStorage.findById(request.getMpa().getId())
-                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + request.getMpa().getId() + " не найден"));
+        Rating rating = ratingDbStorage.findById(request.getMpa())
+                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + request.getMpa() + " не найден"));
         Film film = FilmMapper.mapToFilm(request, rating);
         validateFilm(film);
         Set<Genre> genres = film.getGenres();
@@ -133,6 +133,14 @@ public class FilmService {
         return saved;
     }
 
+    public Film getById(Long id) {
+        Film film = filmStorage.findById(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id = " + id + " не найден");
+        }
+        return film;
+    }
+
     private void validateFilm(Film film) {
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
@@ -163,13 +171,5 @@ public class FilmService {
         return filmStorage.findTopFilms(count).stream()
                 .map(film -> FilmMapper.mapToFilmDto(film, film.getRating()))
                 .collect(Collectors.toList());
-    }
-
-    public Film getById(Long id) {
-        Film film = filmStorage.findById(id);
-        if (film == null) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден");
-        }
-        return film;
     }
 }
