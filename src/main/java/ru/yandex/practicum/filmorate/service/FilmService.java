@@ -104,7 +104,6 @@ public class FilmService {
         }
         Set<Genre> uniqueGenres = FilmMapper.deduplicateGenres(film.getGenres());
         film.setGenres(uniqueGenres);
-
         Film saved = filmStorage.add(film);
         filmGenreDbStorage.deleteGenresByFilmId(saved.getId());
         filmGenreDbStorage.addGenresToFilm(saved.getId(), uniqueGenres);
