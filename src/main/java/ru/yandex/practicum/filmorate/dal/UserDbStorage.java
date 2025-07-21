@@ -57,12 +57,4 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     public boolean containsEmail(String email) {
         return findOne("SELECT * FROM users WHERE email = ?", email).isPresent();
     }
-
-    @Override
-    public void addEmail(String email) {
-    }
-
-    @Override
-    public void removeEmail(String email) {
-    }
 }

@@ -24,18 +24,6 @@ public class FilmLikeDbStorage {
         jdbc.update(sql, filmId, userId);
     }
 
-    public Set<Long> findLikesByFilmId(Long filmId) {
-        String sql = "SELECT user_id FROM film_likes WHERE film_id = ?";
-        return new HashSet<>(jdbc.query(sql,
-                (rs, rowNum) -> rs.getLong("user_id"),
-                filmId));
-    }
-
-    public int countLikes(Long filmId) {
-        String sql = "SELECT COUNT(*) FROM film_likes WHERE film_id = ?";
-        return jdbc.queryForObject(sql, Integer.class, filmId);
-    }
-
     public Map<Long, Set<Long>> loadLikesForFilms(Collection<Film> films) {
         if (films.isEmpty()) return Map.of();
         String inSql = films.stream()

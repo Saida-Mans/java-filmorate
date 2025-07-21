@@ -20,7 +20,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,21 +62,17 @@ public class FilmService {
         filmLikeDbStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getTopFilms(int count) {
-        return filmStorage.findAll().stream()
-                .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
-                .limit(count)
+    public List<FilmDto> getPopularFilms(int count) {
+        return filmStorage.findTopFilms(count).stream()
+                .map(film -> FilmMapper.mapToFilmDto(film, film.getRating()))
                 .collect(Collectors.toList());
     }
 
     public Collection<FilmDto> findAll() {
         Collection<Film> films = filmStorage.findAll();
         Map<Long, Set<Genre>> genresByFilmId = filmGenreDbStorage.loadGenresForFilms(films);
-        Map<Long, Set<Long>> likesByFilmId = filmLikeDbStorage.loadLikesForFilms(films);
-
         for (Film film : films) {
             film.setGenres(genresByFilmId.getOrDefault(film.getId(), Set.of()));
-            film.setLikes(likesByFilmId.getOrDefault(film.getId(), Set.of()));
         }
         return films.stream()
                 .map(f -> FilmMapper.mapToFilmDto(f, f.getRating()))
@@ -85,9 +80,6 @@ public class FilmService {
     }
 
     public Film create(NewFilmRequest request) {
-        if (request.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
-        }
         Rating rating = ratingDbStorage.findById(request.getMpa().getId())
                 .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + request.getMpa().getId() + " не найден"));
         Film film = FilmMapper.mapToFilm(request, rating);
@@ -165,11 +157,5 @@ public class FilmService {
         }
         film.setGenres(filmGenreDbStorage.findGenresByFilmId(id));
         return film;
-    }
-
-    public List<FilmDto> getPopularFilms(int count) {
-        return filmStorage.findTopFilms(count).stream()
-                .map(film -> FilmMapper.mapToFilmDto(film, film.getRating()))
-                .collect(Collectors.toList());
     }
 }

@@ -36,6 +36,9 @@ public class FilmController {
 
     @PostMapping
     public ResponseEntity<FilmDto> create(@RequestBody @Valid NewFilmRequest request) {
+        if (request.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
+        }
         Film film = filmService.create(request);
         return ResponseEntity.ok(FilmMapper.mapToFilmDto(film, film.getRating()));
     }
